@@ -152,7 +152,7 @@ helm install \
     --set "providers.azure.vnet.kubeDnsIp=$KUBE_DNS_IP" \
     --set "providers.azure.masterUri=$MASTER_URI" \
     "$CHART_NAME" \
-    ./charts/virtual-kubelet
+    ./helm
 
 kubectl wait --for=condition=available deploy "${TEST_NODE_NAME}-virtual-kubelet-aci-for-aks" --timeout=300s
 
