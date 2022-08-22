@@ -1,7 +1,7 @@
 name: e2e-tests
 
 on:
-  pull_request_target:
+  pull_request:
     branches: [master]
     paths-ignore: [ docs/**, "**.md", "**.mdx", "**.png", "**.jpg" ]
   push:
@@ -44,9 +44,11 @@ jobs:
 
   e2e-tests:
     needs: export-registry
-    environment: test
     env:
       REGISTRY: ${{ needs.export-registry.outputs.registry }}
+      CLIENTID: "d1464cac-2a02-4e77-a1e3-c6a9220e99b9"
+      TENANT_ID: "72f988bf-86f1-41af-91ab-2d7cd011db47"
+      SUBSCRIPTIONID: "5e1e737b-b4e2-48a2-b9d0-34764affdbaa"
       IMG_VERSION: "dev"
       IMG_TAG: "dev"
     runs-on: ubuntu-latest
@@ -90,9 +92,9 @@ jobs:
           az version
       - uses: azure/login@v1.4.5
         with:
-          client-id: ${{ secrets.CLIENTID }}
-          tenant-id: ${{ secrets.TENANT_ID }}
-          subscription-id: ${{ secrets.SUBSCRIPTIONID }}
+          client-id: ${{ env.CLIENTID }}
+          tenant-id: ${{ env.TENANT_ID }}
+          subscription-id: ${{ env.SUBSCRIPTIONID }}
 
       - name: Run e2e test
         run: |
