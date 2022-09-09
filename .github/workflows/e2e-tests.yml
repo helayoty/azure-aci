@@ -47,7 +47,8 @@ jobs:
     env:
       REGISTRY: ${{ needs.export-registry.outputs.registry }}
       E2E_IMG_TAG:  "e2e-ci"
-      PR_COMMIT_SHA: ${{ github.event.pull_request.head.sha }}
+      PR_COMMIT_REF: ${{ github.event.pull_request.head.ref }}
+
     runs-on: ubuntu-latest
     steps:
       - name: Set up Go
@@ -86,7 +87,7 @@ jobs:
           CLUSTER_NAME: ${{ env.CLUSTER_NAME }}
           VERSION: ${{ env.E2E_IMG_TAG}}
           E2E_TARGET: "pr"
-          PR_COMMIT_SHA: ${{ env.PR_COMMIT_SHA }}
+          PR_COMMIT_REF: ${{ env.PR_COMMIT_REF }}
 
       - name: Cleanup e2e resources
         if: ${{ always() }}
