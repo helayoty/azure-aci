@@ -48,6 +48,7 @@ jobs:
       REGISTRY: ${{ needs.export-registry.outputs.registry }}
       E2E_IMG_TAG:  "e2e-ci"
       PR_COMMIT_REF: ${{ github.event.pull_request.head.ref }}
+
     runs-on: ubuntu-latest
     steps:
       - name: Set up Go
