@@ -8,11 +8,18 @@ builds:
       - linux
     goarch:
       - amd64
+      - arm64
+    goarm:
+      - 5
+      - 6
+      - 7
+    goamd64:
+      - v2
+      - v3
     ldflags:
-      - -X "main.buildVersion={{ .Version }}"
-      - -X "main.buildTime=$(date -u '+%Y-%m-%d-%H:%M UTC')"
-      - -extldflags
-      - -static
+      - '-X "main.buildVersion={{ .Version }}'
+      - '-X "main.buildTime=$(date -u "+%Y-%m-%d-%H:%M UTC")"'
+      - '"-static"'
     env:
       - CGO_ENABLED=0
 
