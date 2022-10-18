@@ -1,8 +1,8 @@
 # refer to https://goreleaser.com for more options
 builds:
   -
-    main: ./cmd/virtual-kubelet
-    binary: bin/virtual-kubelet
+    main: ./cmd/$(*)
+    binary: bin/$(*)
     no_unique_dist_dir: true
     goos:
       - linux
@@ -17,10 +17,9 @@ builds:
       - v2
       - v3
     ldflags:
-      - -X "main.buildVersion={{ .Version }}"
-      - -X "main.buildTime=$(date -u '+%Y-%m-%d-%H:%M UTC')"
-      - -extldflags
-      - -static
+      - '-X "main.buildVersion={{ .Version }}'
+      - '-X "main.buildTime=$(date -u "+%Y-%m-%d-%H:%M UTC")"'
+      - '"-static"'
     env:
       - CGO_ENABLED=0
 
