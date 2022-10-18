@@ -16,8 +16,6 @@ builds:
     goamd64:
       - v2
       - v3
-    ignore:
-      - goamd64: v1
     ldflags:
       - -X "main.buildVersion={{ .Version }}"
       - -X "main.buildTime=$(date -u '+%Y-%m-%d-%H:%M UTC')"

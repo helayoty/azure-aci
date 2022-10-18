@@ -37,17 +37,17 @@ type AzClientsAPIs struct {
 func NewAzClientsAPIs(ctx context.Context, azConfig auth.Config) *AzClientsAPIs {
 	obj := AzClientsAPIs{}
 
-	cClient := azaci.NewContainersClientWithBaseURI(azConfig.Cloud.Services[cloud.ResourceManager].Endpoint, azConfig.AuthConfig.SubscriptionID)
+	cClient := azaci.NewContainersClientWithBaseURI(azConfig.ClientOptions.Cloud.Services[cloud.ResourceManager].Endpoint, azConfig.AuthConfig.SubscriptionID)
 	cClient.Authorizer = azConfig.Authorizer
 	//needed for metrics
 	cClient.Client.Authorizer = azConfig.Authorizer
 	obj.ContainersClient = cClient
 
-	cgClient := ContainerGroupsClientWrapper{CGClient: azaci.NewContainerGroupsClientWithBaseURI(azConfig.Cloud.Services[cloud.ResourceManager].Endpoint, azConfig.AuthConfig.SubscriptionID)}
+	cgClient := ContainerGroupsClientWrapper{CGClient: azaci.NewContainerGroupsClientWithBaseURI(azConfig.ClientOptions.Cloud.Services[cloud.ResourceManager].Endpoint, azConfig.AuthConfig.SubscriptionID)}
 	cgClient.CGClient.Authorizer = azConfig.Authorizer
 	obj.ContainerGroupClient = cgClient
 
-	lClient := azaci.NewLocationClientWithBaseURI(azConfig.Cloud.Services[cloud.ResourceManager].Endpoint, azConfig.AuthConfig.SubscriptionID)
+	lClient := azaci.NewLocationClientWithBaseURI(azConfig.ClientOptions.Cloud.Services[cloud.ResourceManager].Endpoint, azConfig.AuthConfig.SubscriptionID)
 	lClient.Authorizer = azConfig.Authorizer
 	//needed for metadata
 	lClient.Client.Authorizer = azConfig.Authorizer

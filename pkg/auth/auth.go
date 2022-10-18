@@ -11,7 +11,7 @@ import (
 	"strings"
 	"unicode/utf16"
 
-	_ "github.com/Azure/azure-sdk-for-go/sdk/azcore/arm"
+	"github.com/Azure/azure-sdk-for-go/sdk/azcore"
 	"github.com/Azure/azure-sdk-for-go/sdk/azcore/cloud"
 	"github.com/Azure/go-autorest/autorest"
 	"github.com/Azure/go-autorest/autorest/adal"
@@ -30,7 +30,7 @@ const (
 type Config struct {
 	AKSCredential *aksCredential
 	AuthConfig    *Authentication
-	Cloud         cloud.Configuration
+	ClientOptions azcore.ClientOptions
 	Authorizer    autorest.Authorizer
 }
 
@@ -50,7 +50,7 @@ func (c *Config) getAuthorizer(resource string) (autorest.Authorizer, error) {
 		}
 	} else {
 		oauthConfig, err := adal.NewOAuthConfig(
-			c.Cloud.ActiveDirectoryAuthorityHost, c.AuthConfig.TenantID)
+			c.ClientOptions.Cloud.ActiveDirectoryAuthorityHost, c.AuthConfig.TenantID)
 		if err != nil {
 			return nil, err
 		}
@@ -68,7 +68,7 @@ func (c *Config) getAuthorizer(resource string) (autorest.Authorizer, error) {
 // SetAuthConfig sets the configuration needed for Authentication.
 func (c *Config) SetAuthConfig() error {
 	var err error
-	c.Cloud = cloud.AzurePublic
+	c.ClientOptions = getCloudConfiguration(string(AzurePublicCloud))
 
 	if authFilepath := os.Getenv("AZURE_AUTH_LOCATION"); authFilepath != "" {
 		auth := &Authentication{}
@@ -91,7 +91,8 @@ func (c *Config) SetAuthConfig() error {
 		}
 
 		//Set Azure cloud environment
-		c.Cloud = getCloudConfiguration(c.AKSCredential.Cloud)
+		c.ClientOptions = getCloudConfiguration(c.AKSCredential.Cloud)
+
 		c.AuthConfig = NewAuthentication(
 			clientId,
 			c.AKSCredential.ClientSecret,
@@ -130,7 +131,7 @@ func (c *Config) SetAuthConfig() error {
 		}
 	}
 
-	resource := c.Cloud.Services[cloud.ResourceManager].Endpoint
+	resource := c.ClientOptions.Cloud.Services[cloud.ResourceManager].Endpoint
 
 	c.Authorizer, err = c.getAuthorizer(resource)
 	if err != nil {
@@ -138,6 +139,13 @@ func (c *Config) SetAuthConfig() error {
 	}
 
 	return nil
+}
+
+func getCloudConfiguration(cloud string) azcore.ClientOptions {
+	cloudConfig := getCloud(cloud)
+	return azcore.ClientOptions{
+		Cloud: cloudConfig,
+	}
 }
 
 // Authentication represents the Authentication file for Azure.
@@ -237,7 +245,7 @@ func (a *Authentication) decode(b []byte) ([]byte, error) {
 	return ioutil.ReadAll(reader)
 }
 
-func getCloudConfiguration(cloudName string) cloud.Configuration {
+func getCloud(cloudName string) cloud.Configuration {
 	switch cloudName {
 	case string(AzurePublicCloud):
 		return cloud.AzurePublic
