@@ -8,14 +8,21 @@ permissions:
   contents: write
   packages: write
 
+
 env:
   REGISTRY: ghcr.io
+  # Common versions
+  GO_VERSION: '1.18'
   IMAGE_NAME: 'virtual-kubelet'
 
 jobs:
   create-release:
     runs-on: ubuntu-20.04
     steps:
+      - name: Set up Go ${{ env.GO_VERSION }}
+        uses: actions/setup-go@v3
+        with:
+          go-version: ${{ env.GO_VERSION  }}
       - name: Checkout
         uses: actions/checkout@v3
         with:
