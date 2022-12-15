@@ -13,6 +13,11 @@ on:
         description: 'helm chart path'
         required: true
         default: 'charts'
+  pull_request:
+    branches:
+      - master
+      - release-**
+    types: [ closed ]
 
 permissions:
   contents: write
