@@ -4,6 +4,11 @@ on:
   create:
     # Publish semver tags as releases.
     tags: [ 'v*.*.*' ]
+  workflow_dispatch:
+    inputs:
+      imageTag:
+        description: 'release tag'
+        required: true
 
 permissions:
   contents: write
@@ -12,10 +17,12 @@ jobs:
   deploy:
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
         with:
           submodules: true
           fetch-depth: 0
+          ref: ${{ github.event.inputs.imageTag }}
       - name: Publish Helm chart
         uses: stefanprodan/helm-gh-pages@v1.7.0
         with:
