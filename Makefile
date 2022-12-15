@@ -144,12 +144,6 @@ GO_BIN_DEPS = $(call FILTER_HACK, $(call FILTER_TESTS, $(call FILTER_E2E, $(GO_F
 bin/%: $(GO_BIN_DEPS)
 	CGO_ENABLED=0 go build -ldflags '-extldflags "-static"' -o bin/$(*) $(VERSION_FLAGS) ./cmd/$(*)
 
-.PHONY: helm
-helm: bin/virtual-kubelet.tgz
-
-bin/virtual-kubelet.tgz:
-	rm -rf /tmp/virtual-kubelet
-	mkdir /tmp/virtual-kubelet
-	cp -r helm/* /tmp/virtual-kubelet/
-	mkdir -p bin
-	tar -zcvf bin/virtual-kubelet.tgz -C /tmp virtual-kubelet
+.PHONY: release-manifest
+release-manifest:
+	@sed -i -e 's/^IMG_TAG ?= .*/IMG_TAG ?= ${VERSION}/' ./Makefile
