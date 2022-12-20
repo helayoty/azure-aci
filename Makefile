@@ -22,6 +22,7 @@ TEST_CREDENTIALS_JSON ?= $(TEST_CREDENTIALS_DIR)/credentials.json
 TEST_LOGANALYTICS_JSON ?= $(TEST_CREDENTIALS_DIR)/loganalytics.json
 export TEST_CREDENTIALS_JSON TEST_LOGANALYTICS_JSON
 
+VERSION ?= v1.4.7
 IMG_NAME ?= virtual-kubelet
 IMAGE ?= $(REGISTRY)/$(IMG_NAME)
 LOCATION := $(E2E_REGION)
@@ -29,7 +30,7 @@ E2E_CLUSTER_NAME := $(CLUSTER_NAME)
 
 OUTPUT_TYPE ?= type=docker
 BUILDPLATFORM ?= linux/amd64
-IMG_TAG ?= v2.0.0
+IMG_TAG ?= $(subst v,,$(VERSION))
 
 
 ## --------------------------------------
@@ -146,7 +147,7 @@ bin/%: $(GO_BIN_DEPS)
 
 .PHONY: release-manifest
 release-manifest:
-	@sed -i -e 's/^IMG_TAG ?= .*/IMG_TAG ?= ${VERSION}/' ./Makefile
+	@sed -i -e 's/^VERSION ?= .*/VERSION ?= v${VERSION}/' ./Makefile
 	@sed -i -e "s/version: .*/version: ${VERSION}/" ./charts/virtual-kubelet/Chart.yaml
 	@sed -i -e "s/tag: .*/tag: ${VERSION}/" ./charts/virtual-kubelet/values.yaml
 	@sed -i -e 's/RELEASE_TAG=.*/RELEASE_TAG=${VERSION}/' ./charts/virtual-kubelet/README.md

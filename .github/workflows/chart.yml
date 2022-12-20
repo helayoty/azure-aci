@@ -3,6 +3,7 @@ name: publish_helm_chart
 on:
   pull_request:
     branches:
+      - master
       - release-**
     types: [ closed ]
 
@@ -10,7 +11,8 @@ permissions:
   contents: write
 
 jobs:
-  deploy:
+  publish-helm-chart:
+    if: github.event.pull_request.merged == true && contains(github.event.pull_request.title, 'update manifest and helm charts')
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
