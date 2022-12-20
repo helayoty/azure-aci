@@ -31,6 +31,8 @@ jobs:
       - uses: actions/setup-go@v3
         with:
           go-version: "1.18"
+      - name: update release manifest
+        run: make release-manifest
       - name: Create release pull request
         uses: peter-evans/create-pull-request@v4
         with:
