@@ -29,7 +29,7 @@ E2E_CLUSTER_NAME := $(CLUSTER_NAME)
 
 OUTPUT_TYPE ?= type=docker
 BUILDPLATFORM ?= linux/amd64
-IMG_TAG ?= v1.6.1
+IMG_TAG ?= v1.6.2
 
 
 ## --------------------------------------
