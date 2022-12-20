@@ -33,6 +33,8 @@ jobs:
           go-version: "1.18"
       - name: update release manifest
         run: make release-manifest
+        env:
+          VERSION: "${{ github.event.inputs.release_version }}"
       - name: Create release pull request
         uses: peter-evans/create-pull-request@v4
         with:
