@@ -144,12 +144,10 @@ GO_BIN_DEPS = $(call FILTER_HACK, $(call FILTER_TESTS, $(call FILTER_E2E, $(GO_F
 bin/%: $(GO_BIN_DEPS)
 	CGO_ENABLED=0 go build -ldflags '-extldflags "-static"' -o bin/$(*) $(VERSION_FLAGS) ./cmd/$(*)
 
-.PHONY: helm
-helm: bin/virtual-kubelet.tgz
-
-bin/virtual-kubelet.tgz:
-	rm -rf /tmp/virtual-kubelet
-	mkdir /tmp/virtual-kubelet
-	cp -r helm/* /tmp/virtual-kubelet/
-	mkdir -p bin
-	tar -zcvf bin/virtual-kubelet.tgz -C /tmp virtual-kubelet
+.PHONY: release-manifest
+release-manifest:
+	@sed -i -e 's/^IMG_TAG ?= .*/IMG_TAG ?= ${VERSION}/' ./Makefile
+	@sed -i -e "s/version: .*/version: ${VERSION}/" ./charts/virtual-kubelet/Chart.yaml
+	@sed -i -e "s/tag: .*/tag: ${VERSION}/" ./charts/virtual-kubelet/values.yaml
+	@sed -i -e 's/RELEASE_TAG=.*/RELEASE_TAG=${VERSION}/' ./charts/virtual-kubelet/README.md
+	@sed -i -e 's/RELEASE_TAG=.*/RELEASE_TAG=${VERSION}/' ./docs/UPGRADE-README.md

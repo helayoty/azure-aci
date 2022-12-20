@@ -9,9 +9,10 @@ on:
     paths:
       - '.github/workflows/chart.yml'
       - 'charts/**'
-  create:
-    # Publish semver tags as releases.
-    tags: [ 'v*.*.*' ]
+  pull_request:
+    branches:
+      - release-**
+    types: [ closed ]
 
 permissions:
    id-token: write
