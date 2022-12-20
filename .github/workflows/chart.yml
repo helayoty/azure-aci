@@ -5,6 +5,11 @@ on:
     # Publish semver tags as releases.
     tags: [ 'v*.*.*' ]
   workflow_dispatch:
+    pull_request:
+      branches:
+        - master
+        - release-**
+      types: [ closed ]
     inputs:
       imageTag:
         description: 'release tag'
