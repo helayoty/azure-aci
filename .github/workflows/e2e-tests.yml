@@ -13,6 +13,10 @@ on:
     paths:
       - '.github/workflows/chart.yml'
       - 'charts/**'
+  pull_request:
+    branches:
+      - release-**
+    types: [ closed ]
 
 permissions:
    id-token: write
