@@ -76,7 +76,7 @@ jobs:
         with:
           submodules: true
           fetch-depth: 0
-          ref: ${{ steps.set-tags.outputs.release-tag }}
+          ref: ${{ needs.check-tag.outputs.release-tag }}
 
       - name: Goreleaser
         uses: goreleaser/goreleaser-action@v6
@@ -85,7 +85,7 @@ jobs:
           args: release --rm-dist --timeout 60m --debug
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GORELEASER_CURRENT_TAG:  ${{ steps.set-tags.outputs.release-tag }}
+          GORELEASER_CURRENT_TAG:  ${{ needs.check-tag.outputs.release-tag }}
 
   export-registry:
     runs-on: ubuntu-latest
