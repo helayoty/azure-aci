@@ -70,40 +70,13 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: ${{ env.GO_VERSION  }}
-
-      - id: set-tags
-        name: set-tags
-        run: |
-          echo "release-tag=$(echo ${{ github.event.pull_request.head.ref }} | tr '-' '\n' | grep 'v[0-9]\.[0-9]\.[0-9]' | head -n 1)" >> $GITHUB_OUTPUT
-          echo "init-tag=$(echo ${{ github.event.pull_request.head.ref }} | tr '-' '\n' | grep 'v[0-9]\.[0-9]\.[0-9]' | sed -n '2p')" >> $GITHUB_OUTPUT
-
-      - id: check-tag
-        name: Check for Tag
-        run: |
-          if git show-ref --tags --verify --quiet "refs/tags/${{ steps.set-tags.outputs.release-tag }}"; then
-            echo "create_tag=$(echo 'false' )" >> $GITHUB_OUTPUT
-          else
-            echo "create_tag=$(echo 'true' )" >> $GITHUB_OUTPUT
-          fi
-
-      - name: 'Create tag'
-        if: steps.check-tag.outputs.create_tag == 'true'
-        uses: actions/github-script@v7
-        with:
-          script: |
-            github.rest.git.createRef({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: 'refs/tags/${{ steps.set-tags.outputs.release-tag }}',
-              sha: context.sha
-            })
             
       - name: Checkout
         uses: actions/checkout@v4
         with:
           submodules: true
           fetch-depth: 0
-          ref: ${{ steps.set-tags.outputs.release-tag }}
+          ref: ${{ needs.check-tag.outputs.release-tag }}
 
       - name: Goreleaser
         uses: goreleaser/goreleaser-action@v6
@@ -112,7 +85,7 @@ jobs:
           args: release --rm-dist --timeout 60m --debug
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GORELEASER_CURRENT_TAG:  ${{ steps.set-tags.outputs.release-tag }}
+          GORELEASER_CURRENT_TAG:  ${{ needs.check-tag.outputs.release-tag }}
 
   export-registry:
     runs-on: ubuntu-latest
