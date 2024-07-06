@@ -3,10 +3,10 @@ on:
   workflow_call:
     inputs:
       registry:
-        description: 'Which registry are we pushing the image to?'
+        type: string
         required: true
       release_version:
-        description: 'Which version are we creating an image for?'
+        type: string
         required: true
 
 permissions:
