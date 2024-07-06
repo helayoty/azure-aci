@@ -29,12 +29,6 @@ jobs:
         with:
           go-version: ${{ env.GO_VERSION  }}
 
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          submodules: true
-
       - id: set-tags
         name: set-tags
         run: |
@@ -61,6 +55,13 @@ jobs:
               ref: 'refs/tags/${{ steps.set-tags.outputs.release-tag }}',
               sha: context.sha
             })
+            
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          fetch-depth: 0
+          ref: ${{ steps.set-tags.outputs.release-tag }}
 
       - name: Goreleaser
         uses: goreleaser/goreleaser-action@v6
@@ -69,6 +70,7 @@ jobs:
           args: release --rm-dist --timeout 60m --debug
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GORELEASER_CURRENT_TAG:  ${{ steps.set-tags.outputs.release-tag }}
 
   export-registry:
     runs-on: ubuntu-latest
