@@ -3,12 +3,14 @@ on:
   workflow_call:
     inputs:
       registry:
+        description: 'Which registry are we pushing the image to?'
         type: string
         required: true
       init_container_version:
+        description: 'Which init container version are we creating an image for?'
         required: true
         type: string
-        default: "v0.3.0"
+        default: v0.3.0
 
 permissions:
   contents: write
