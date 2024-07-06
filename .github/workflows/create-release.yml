@@ -85,15 +85,19 @@ jobs:
           echo "::set-output name=registry::$(echo "${{ env.REGISTRY }}/${{ github.repository }}" | tr [:upper:] [:lower:])"
 
   publish-image:
-    needs: [export-registry]
+    needs: 
+      - create-release
+      - export-registry
     uses: ./.github/workflows/publish-image.yml
     with:
       registry: ${{ needs.export-registry.outputs.registry }}
-      release_version: ${{ steps.set-tags.outputs.release-tag }}
+      release_version: ${{ needs.create-release.outputs.release-tag }}
 
   publish-init-validation-image:
-    needs: [export-registry]
+    needs: 
+      - create-release
+      - export-registry
     uses: ./.github/workflows/publish-init-container-image.yml
     with:
       registry: ${{ needs.export-registry.outputs.registry }}
-      init_container_version: ${{ steps.set-tags.outputs.init-tag }}
+      init_container_version: ${{ needs.create-release.outputs.init-tag }}
